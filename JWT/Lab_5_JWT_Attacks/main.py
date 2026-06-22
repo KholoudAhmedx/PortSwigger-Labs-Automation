@@ -24,11 +24,6 @@ result = retrieve_token()
 print(result)
 
 def generate_modified_JWT():
-
-    # 1. Authenticate and extract the session token
-    # response = requests.post(config.LOGIN_URL,data=config.Credentials, allow_redirects=False)
-    # if response.status_code == 302:
-    #     JWT_TOKEN = response.cookies.get("session")
     
     jwt_token = retrieve_token()
     # 2. Modify payload to impersonate admin
